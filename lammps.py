@@ -18,7 +18,6 @@ from ctypes import *
 from os.path import dirname,abspath,join
 from inspect import getsourcefile
 
-import ctypes
 import numpy as np
 import itertools
 import logging
