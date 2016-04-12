@@ -11,7 +11,7 @@
 #   See the README file in the top-level LAMMPS directory.
 # -------------------------------------------------------------------------
 
-# Python wrapper on LAMMPS library via ctypes
+# Reactive MD class that uses the python wrapper for LAMMPS library via ctypes
 
 import sys,traceback,types
 from ctypes import *
