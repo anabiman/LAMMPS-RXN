@@ -14,7 +14,7 @@ if __name__ == '__main__':
 			  'relax': 75.0, 
 			  'cutoff': 1.0,
 			  'ensemble': 'nvt', 
-			  'nSS': 2, 
+			  'nSS': 2,  # number of components / subsystems
 			  'idSS': [1,2],
 			  'box': (0,40,0,80,0,40),
 			  'Natoms': [10000, 5000],
@@ -59,3 +59,4 @@ if __name__ == '__main__':
 	# Run an ensemble of short MD runs
 	for _ in range(params['runs']):
 		Rxn.integrate(steps = params['rxnSteps'])
+		
