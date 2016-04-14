@@ -266,6 +266,8 @@ class reaction:
 
     self.lmp = lammps()
     self.pargs = pargs
+    self.monitorList = []
+    self.vars = []
 
     if pargs['ensemble'] == 'nvt':
       self.pargs['ensembleArgs'] =  (pargs['temp'], pargs['temp'], pargs['relax'])
@@ -364,7 +366,7 @@ class reaction:
     logging.info('Initializing atomic velocities')
 
     seed = np.random.randint(1,10**6)
-    self.lmp.command('velocity all create {} {}'.format(self.pargs['temp'], seed))
+    self.lmp.command('velocity all create {} {}'.format(self.pargs['temp'] * 0.3, seed))
 
   def setupMass(self):
     """
@@ -401,11 +403,13 @@ class reaction:
 
     elif self.pargs['ensemble'] is 'npt':
       logging.info('Running NPT simulation ...')
-      command = 'fix {} all {} temp {} {} {} iso {} {} {}'
+      command = 'fix {} all {} temp/rescale {} {} {} iso {} {} {}'
     else:
       raise ValueError
 
-    self.lmp.command(command.format(name, self.pargs['ensemble'], *self.pargs['ensembleArgs']))
+    #self.lmp.command(command.format(name, self.pargs['ensemble'], *self.pargs['ensembleArgs']))
+
+    self.lmp.command('fix 3 all temp/rescale 100 300.0 300.1 0.02 0.5')
 
     if dt is None:
       self.lmp.command('timestep {}'.format(self.pargs['dt']))
@@ -417,6 +421,12 @@ class reaction:
     logging.info('Integrating the system for {} steps'.format(steps))
 
     self.lmp.command('run {}'.format(steps))
+
+    for tup in self.monitorList:
+      self.lmp.command('compute {} {} {}'.format(*tup))
+      print 'compute {} {} {}'.format(*tup)
+      self.vars.append(self.lmp.extract_compute('thermo_temp', 0, 0))
+      self.lmp.command('uncompute {}'.format(tup[0]))
 
   def printSetup(self, freq):
     """
@@ -491,18 +501,7 @@ class reaction:
   def monitor(self, name, group, var):
     """
     """
-    self.lmp.command('compute {} {} {}'.format(name, group, var))
-
-  def extract(self, id, style, type, length):
-    """
-    """
-    var = self.lmp.extract_compute(id, style, type)
-    varPy = np.zeros(length)
-
-    for i in range(length):
-      varPy[i] = var[i]
-
-    return varPy
+    self.monitorList.append((name, group, var))
 
   def __del__(self):
     """ Destructor

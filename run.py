@@ -11,7 +11,7 @@ if __name__ == '__main__':
 			  'boundary': ('p','p','p'),
 			  'dt': 1.0, 
 			  'temp': 300.0, 
-			  'relax': 75.0, 
+			  'relax': 10.0, 
 			  'cutoff': 1.0,
 			  'ensemble': 'nvt', 
 			  'nSS': 2,  # number of components / subsystems
@@ -20,8 +20,8 @@ if __name__ == '__main__':
 			  'Natoms': [10000, 5000],
 			  'print': ('time', 'atoms', 'ke'),
 			  'mass': [12.00, 1.01],
-			  'runs': 1,
-			  'rxnSteps': 1000,
+			  'totalSteps': 1000,
+			  'rxnSteps': 100,
 			  'prob': 0.5,
 			  'freq': 100,
 			  'thermalize': 1000
@@ -42,21 +42,23 @@ if __name__ == '__main__':
 	# Setup integration method
 	Rxn.setupIntegrate(name='integrator')
 	
-	# Monitor temperature as a function of time
-	Rxn.monitor(name='globTemp', group='all', var='temp')
-
 	# An equilibration / thermalization run
 	Rxn.integrate(steps=params['thermalize'])
 
-	# Extract and plot temperature as a function of time
-	temp = Rxn.extract('globTemp', 0, 1, params['thermalize'])
-	plt.plot(temp)
-	plt.show()
+	# Monitor temperature as a function of time
+	Rxn.monitor(name='globTemp', group='all', var='temp')
 
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	Rxn.dumpSetup(sel='all', freq=params['freq'], traj='traj.xyz')
 
 	# Run an ensemble of short MD runs
-	for _ in range(params['runs']):
+	for _ in range(params['totalSteps'] / params['rxnSteps']):
 		Rxn.integrate(steps = params['rxnSteps'])
-		
+
+	# Plot temperature vs time, then save the figure as a pdf
+	plt.rc('text', usetex=True)
+	plt.plot(Rxn.vars)
+	plt.xlabel(r"Time (fs) $\times$ {}".format(params['rxnSteps']))
+	plt.ylabel("Temp (K)")
+	plt.savefig("Temp.pdf")
+
