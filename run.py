@@ -1,6 +1,7 @@
 
 import matplotlib.pylab as plt
 from lammps import lammps, reaction
+import numpy as np
 
 if __name__ == '__main__':
 
@@ -56,8 +57,8 @@ if __name__ == '__main__':
 	# Run an ensemble of short MD runs
 	for _ in range(params['totalSteps'] / params['rxnSteps']):
 		Rxn.integrate(steps = params['rxnSteps'])
-                coords = Rxn.extractCoords(coords) # computes the average coords
-		Rxn.computeRxn(params['prob'], params['cutoff'])
+                #coords = Rxn.extractCoords(coords) # computes the average coords
+		#Rxn.computeRxn(params['prob'], params['cutoff'])
 
 	# Plot temperature vs time, then save the figure as a pdf
 	plt.rc('text', usetex=True)
