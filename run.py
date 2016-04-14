@@ -16,15 +16,15 @@ if __name__ == '__main__':
 			  'ensemble': 'nvt', 
 			  'nSS': 2,  # number of components / subsystems
 			  'idSS': [1,2],
-			  'box': (0,40,0,80,0,40),
+			  'box': (0,40,0,80,0,40), # simulation box size
 			  'Natoms': [10000, 5000],
-			  'print': ('time', 'atoms', 'ke'),
+			  'print': ('time', 'atoms', 'ke'), # print the time, atom number, and kinetic energy
 			  'mass': [12.00, 1.01],
 			  'totalSteps': 1000,
 			  'rxnSteps': 100,
-			  'prob': 0.5,
-			  'freq': 100,
-			  'thermalize': 1000
+			  'prob': 0.5, # probability of reaction taking place ~ purely heuristic for now
+			  'freq': 100, # frequency of saving/printing output
+			  'thermalize': 1000 # number of steps to thermalize the system before commencing production run
 			  }
 
 	# Create an instance of the Reaction class
@@ -36,7 +36,7 @@ if __name__ == '__main__':
 	# Specify the force field based on the LJ cut-off
 	Rxn.setupPhysics(ftype='lj/cut')
 
-	# Print output specifies in 'print' ever 100 steps
+	# Print output specified in 'print' every 'freq' steps
 	Rxn.printSetup(freq=params['freq'])
 
 	# Setup integration method
