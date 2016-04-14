@@ -51,9 +51,13 @@ if __name__ == '__main__':
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	Rxn.dumpSetup(sel='all', freq=params['freq'], traj='traj.xyz')
 
+	coords = np.zeros((Rxn.lmp.get_natoms(),3))
+
 	# Run an ensemble of short MD runs
 	for _ in range(params['totalSteps'] / params['rxnSteps']):
 		Rxn.integrate(steps = params['rxnSteps'])
+                coords = Rxn.extractCoords(coords) # computes the average coords
+		Rxn.computeRxn(params['prob'], params['cutoff'])
 
 	# Plot temperature vs time, then save the figure as a pdf
 	plt.rc('text', usetex=True)
