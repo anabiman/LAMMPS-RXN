@@ -1,1 +1,1 @@
-A dynamic Monte Carlo algorithm that uses molecular dynamics to estimate reaction probabilities
+A dynamic Monte Carlo algorithm that uses molecular dynamics to simulate chemical reactions
